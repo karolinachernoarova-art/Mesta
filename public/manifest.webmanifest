@@ -1,0 +1,19 @@
+{
+  "name": "Mesta NSTU",
+  "short_name": "Mesta",
+  "description": "Бронирование отелей и ресторанов",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F5F5F0",
+  "theme_color": "#5A5A40",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

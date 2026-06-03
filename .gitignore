@@ -1,0 +1,15 @@
+node_modules/
+.venv/
+.verify_pydeps/
+.deploy_tools/
+build/
+dist/
+coverage/
+__pycache__/
+docx_render/
+outputs/
+render_full_note/
+.DS_Store
+*.log
+.env*
+!.env.example
