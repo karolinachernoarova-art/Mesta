@@ -8,6 +8,11 @@ from ..security import current_user
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
+ADMIN_EMAILS = {
+    'hohlov.andrej2014@gmail.com',
+    'kkaaroollinaa@yandex.com',
+}
+
 
 def auth_response(user):
     token = create_access_token(identity=str(user.id))
@@ -25,7 +30,7 @@ def register():
         return jsonify({'error': 'User exists'}), 400
 
     user = User(email=email, password_hash=generate_password_hash(password))
-    if email == 'hohlov.andrej2014@gmail.com':
+    if email in ADMIN_EMAILS:
         user.is_admin = True
     db.session.add(user)
     db.session.commit()

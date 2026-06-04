@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ChevronLeft, MapPin, Star, Share, Heart, ImagePlus, X, Trash2, Loader2 } from "lucide-react";
 import { useAuth } from '../lib/AuthContext';
@@ -30,7 +30,6 @@ export default function PlaceDetail() {
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [imageUploading, setImageUploading] = useState(false);
   const [deletingReviewId, setDeletingReviewId] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!id || !user) return;
@@ -147,6 +146,7 @@ export default function PlaceDetail() {
       showToast({ type: 'error', title: 'Не удалось загрузить фото', message: err instanceof Error ? err.message : undefined });
     } finally {
       setImageUploading(false);
+      e.target.value = '';
     }
   };
 
@@ -312,10 +312,15 @@ export default function PlaceDetail() {
                )}
 
                <div className="flex items-center gap-3">
-                 <button disabled={imageUploading || newReviewImages.length >= 3} onClick={() => fileInputRef.current?.click()} className="flex items-center justify-center w-10 h-10 border-2 border-dashed border-[#5A5A40]/30 text-[#5A5A40] rounded-lg hover:bg-[#5A5A40]/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" title="Добавить фото">
+                 <label
+                   htmlFor="reviewImageUpload"
+                   aria-disabled={imageUploading || newReviewImages.length >= 3}
+                   className={`flex items-center justify-center w-10 h-10 border-2 border-dashed border-[#5A5A40]/30 text-[#5A5A40] rounded-lg hover:bg-[#5A5A40]/5 transition-colors cursor-pointer ${(imageUploading || newReviewImages.length >= 3) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                   title="Добавить фото"
+                 >
                    {imageUploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ImagePlus className="w-5 h-5" />}
-                 </button>
-                 <input type="file" hidden ref={fileInputRef} accept="image/*" multiple onChange={handleImageUpload} />
+                 </label>
+                 <input id="reviewImageUpload" type="file" className="absolute h-px w-px overflow-hidden opacity-0" accept="image/*,.heic,.heif,.avif" multiple disabled={imageUploading || newReviewImages.length >= 3} onChange={handleImageUpload} />
                  
                  <button
                    onClick={submitReview}

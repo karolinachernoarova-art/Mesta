@@ -7,10 +7,12 @@ import { Place } from '../data/mockData';
 import ImageWithFallback from '../components/ImageWithFallback';
 import { fetchApi } from '../lib/api';
 import { uploadImage } from '../api/uploads';
+import { useFeedback } from "../components/FeedbackProvider";
 
 export default function Profile() {
   const { user, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const { showToast } = useFeedback();
 
   const [view, setView] = useState<'profile' | 'settings' | 'help' | 'favorites'>('profile');
 
@@ -37,8 +39,12 @@ export default function Profile() {
          body: JSON.stringify({ photoUrl: url })
       });
       setCustomAvatar(url);
+      showToast({ type: 'success', title: 'Фото профиля обновлено' });
     } catch(err) {
       console.error(err);
+      showToast({ type: 'error', title: 'Не удалось загрузить фото', message: err instanceof Error ? err.message : undefined });
+    } finally {
+      e.target.value = '';
     }
   };
 
@@ -147,10 +153,27 @@ export default function Profile() {
             <div className="flex items-center space-x-4 mb-4">
               <img src={customAvatar || `https://ui-avatars.com/api/?name=${user.email}`} className="w-16 h-16 rounded-full shadow-sm border border-[var(--border-main)]" alt="Avatar"/>
               <div>
-                <button disabled={!personalDataAccepted} onClick={() => document.getElementById('avatarUpload')?.click()} className="text-sm font-bold text-[var(--brand-primary)] hover:underline disabled:text-[var(--text-muted)] disabled:no-underline">
+                <label
+                  htmlFor="avatarUpload"
+                  aria-disabled={!personalDataAccepted}
+                  className={cn(
+                    "relative inline-block text-sm font-bold text-[var(--brand-primary)] hover:underline cursor-pointer",
+                    !personalDataAccepted && "text-[var(--text-muted)] no-underline cursor-not-allowed"
+                  )}
+                >
                   Изменить фото
-                </button>
-                <input id="avatarUpload" type="file" hidden accept="image/*" onChange={handleAvatarUpload} />
+                </label>
+                <input
+                  id="avatarUpload"
+                  type="file"
+                  className="absolute h-px w-px overflow-hidden opacity-0"
+                  accept="image/*,.heic,.heif,.avif"
+                  disabled={!personalDataAccepted}
+                  onChange={handleAvatarUpload}
+                />
+                {!personalDataAccepted && (
+                  <p className="mt-1 text-xs text-[var(--text-muted)]">Сначала отметьте согласие ниже.</p>
+                )}
               </div>
             </div>
           )}

@@ -128,6 +128,7 @@ export default function Admin() {
       showToast({ type: 'success', title: 'Главное фото загружено' });
     } finally {
       setImageUploading(false);
+      e.target.value = '';
     }
   };
 
@@ -141,6 +142,7 @@ export default function Admin() {
       showToast({ type: 'success', title: 'Галерея обновлена' });
     } finally {
       setImageUploading(false);
+      e.target.value = '';
     }
   };
 
@@ -210,10 +212,14 @@ export default function Admin() {
             <Field label="Главное фото">
               <div className="flex gap-2">
                 <input required value={formData.imageUrl} onChange={e => setFormData({ ...formData, imageUrl: e.target.value })} className="admin-input flex-1" placeholder="https://" />
-                <button disabled={imageUploading} type="button" onClick={() => document.getElementById('mainImageUpload')?.click()} className="px-4 bg-[var(--bg-accent)] border border-[var(--border-main)] rounded-2xl">
+                <label
+                  htmlFor="mainImageUpload"
+                  aria-disabled={imageUploading}
+                  className={`px-4 bg-[var(--bg-accent)] border border-[var(--border-main)] rounded-2xl inline-flex items-center justify-center cursor-pointer ${imageUploading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                >
                   {imageUploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ImagePlus className="w-5 h-5" />}
-                </button>
-                <input id="mainImageUpload" type="file" hidden accept="image/*" onChange={handleMainImageUpload} />
+                </label>
+                <input id="mainImageUpload" type="file" className="absolute h-px w-px overflow-hidden opacity-0" accept="image/*,.heic,.heif,.avif" disabled={imageUploading} onChange={handleMainImageUpload} />
               </div>
             </Field>
           </div>
@@ -222,10 +228,14 @@ export default function Admin() {
             <Field label="Доп. фото">
               <div className="flex gap-2">
                 <input value={formData.images} onChange={e => setFormData({ ...formData, images: e.target.value })} className="admin-input flex-1" placeholder="https://..., https://..." />
-                <button disabled={imageUploading} type="button" onClick={() => document.getElementById('galleryImageUpload')?.click()} className="px-4 bg-[var(--bg-accent)] border border-[var(--border-main)] rounded-2xl">
+                <label
+                  htmlFor="galleryImageUpload"
+                  aria-disabled={imageUploading}
+                  className={`px-4 bg-[var(--bg-accent)] border border-[var(--border-main)] rounded-2xl inline-flex items-center justify-center cursor-pointer ${imageUploading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                >
                   {imageUploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ImagePlus className="w-5 h-5" />}
-                </button>
-                <input id="galleryImageUpload" type="file" hidden accept="image/*" multiple onChange={handleGalleryUpload} />
+                </label>
+                <input id="galleryImageUpload" type="file" className="absolute h-px w-px overflow-hidden opacity-0" accept="image/*,.heic,.heif,.avif" multiple disabled={imageUploading} onChange={handleGalleryUpload} />
               </div>
             </Field>
           </div>
@@ -292,9 +302,9 @@ export default function Admin() {
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="block">
+    <div className="block">
       <span className="block text-xs font-bold uppercase text-[var(--text-muted)] mb-2">{label}</span>
       {children}
-    </label>
+    </div>
   );
 }

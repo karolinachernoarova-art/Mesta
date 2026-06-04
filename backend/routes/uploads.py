@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 
 bp = Blueprint('uploads', __name__, url_prefix='/uploads')
 
-ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'webp', 'gif', 'heic', 'heif', 'avif'}
 
 
 def upload_root():
@@ -28,7 +28,7 @@ def upload_image():
     if not file or not file.filename:
         return jsonify({'error': 'File is required'}), 400
     if not is_allowed(file.filename):
-        return jsonify({'error': 'Unsupported image type'}), 400
+        return jsonify({'error': 'Поддерживаются JPG, PNG, WEBP, GIF, HEIC, HEIF и AVIF'}), 400
 
     extension = secure_filename(file.filename).rsplit('.', 1)[1].lower()
     filename = f'{uuid.uuid4().hex}.{extension}'
